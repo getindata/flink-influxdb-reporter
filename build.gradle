@@ -1,0 +1,48 @@
+plugins {
+  id "com.github.johnrengelman.shadow" version "2.0.1"
+  id "java"
+  id "net.ltgt.apt" version "0.10"
+}
+
+group "com.getindata"
+version "1.0"
+
+sourceCompatibility = 1.8
+
+def flinkVersion = "1.4.2"
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compileOnly "org.projectlombok:lombok:1.18.0"
+
+  compile "com.github.davidb:metrics-influxdb:0.9.3"
+  compile "org.apache.flink:flink-annotations:${flinkVersion}"
+  compile "org.apache.flink:flink-metrics-core:${flinkVersion}"
+  compile "org.apache.flink:flink-metrics-dropwizard:${flinkVersion}"
+  compile "io.vavr:vavr:0.9.1"
+
+  testRuntime "org.junit.jupiter:junit-jupiter-engine:5.2.0"
+  testCompile "org.junit.jupiter:junit-jupiter-api:5.2.0"
+  testCompile "org.mockito:mockito-all:1.10.19"
+  testCompile "com.google.guava:guava:19.0"
+
+  apt "org.projectlombok:lombok:1.18.0"
+}
+
+shadowJar {
+  baseName = "flink-influxdb-reporter"
+  classifier = "${flinkVersion}-all"
+
+  dependencies {
+    exclude(dependency("org.apache.flink:flink-annotations"))
+    exclude(dependency("org.apache.flink:flink-metrics-core"))
+    exclude(dependency("org.projectlombok:lombok:"))
+    exclude(dependency("ch.qos.logback:"))
+    exclude(dependency("org.slf4j:"))
+    exclude(dependency("log4j:log4j"))
+  }
+}
+
